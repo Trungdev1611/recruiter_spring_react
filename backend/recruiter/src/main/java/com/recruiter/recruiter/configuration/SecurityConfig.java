@@ -41,7 +41,7 @@ public class SecurityConfig  {
                 .cors(Customizer.withDefaults())
                 // lu?ng auth cho truy c?p mà không c?n b?o v?
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         // .requestMatchers("/api/v1/posts/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll() // cấu hình swagger public

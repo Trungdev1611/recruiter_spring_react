@@ -12,7 +12,7 @@ public class MailContentBuilderService {
                     "<h4>Hi %s,</h4>" +
                             "<p>Please activate your account.</p>" +
                             "<p>Thank you for signing up to TopHire. Please click on the below URL to activate your account:</p>" +
-                            "<a href=\"http://localhost:8080/active-account/%s\">Activate Account</a>" +
+                            "<a href=\"http://localhost:8080/auth/active-account/%s\">Activate Account</a>" +
                             "<p>Thank you for signing up!</p>",
                     username, token
             );
