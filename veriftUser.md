@@ -1,0 +1,1 @@
+send the email user an token after they register, if user click on this link, user will call an api with token and server can verify the token by findByToken from table token, sau khi verify xong phải xóa token đi và 

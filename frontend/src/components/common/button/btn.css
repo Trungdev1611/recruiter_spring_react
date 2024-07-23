@@ -1,0 +1,5 @@
+.buttonCommon {
+    background: linear-gradient(to right, #2daa65, #57c557);
+    border: none; /* Optional: Removes default border if you want a cleaner look */
+    color: white; /* Optional: Sets text color for better contrast */
+}
