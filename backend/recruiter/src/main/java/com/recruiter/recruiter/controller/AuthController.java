@@ -18,19 +18,19 @@ public class AuthController {
     @Autowired
     private  AuthService authService;
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     ResponseEntity<Response> signUp(@Valid @RequestBody UserRequest userRequest) {
         Response response = Response.successResponse(authService.signUp(userRequest));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/active-account/{token}")
+    @GetMapping("/auth/active-account/{token}")
     ResponseEntity<Response> activeAccount(@PathVariable String token) {
         Response response = Response.successResponse(authService.verifyRegisterToken(token));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     ResponseEntity<Response> login(@Valid @RequestBody RequestLogin userLogin) {
         Response response = Response.successResponse(authService.login(userLogin));
         return new ResponseEntity<>(response, HttpStatus.CREATED);

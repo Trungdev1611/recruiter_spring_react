@@ -7,6 +7,7 @@ import com.recruiter.recruiter.dto.response.ResponseLogin;
 import com.recruiter.recruiter.dto.response.UserResponse;
 import com.recruiter.recruiter.exception.DataExists;
 import com.recruiter.recruiter.exception.NotFoundEx;
+import com.recruiter.recruiter.jwt.JwtProvider;
 import com.recruiter.recruiter.mapper.UserMapper;
 import com.recruiter.recruiter.models.User;
 import com.recruiter.recruiter.models.VerifyToken;
@@ -17,15 +18,14 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -48,6 +48,13 @@ public class AuthService {
 
     @Autowired
     private final VerifyRegisterRepository verifyRegisterRepository;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final JwtProvider jwtProvider;
+    @Autowired
+    private final AuthenticationManager authenticationManager;
     @Transactional
     public String  signUp(UserRequest userRequest) {
         Boolean checkUserExist = authRepository.existsByUsername(userRequest.getUsername());
@@ -58,6 +65,7 @@ public class AuthService {
         User user = userMapper.userRequestToUser(userRequest);
         //default is false, active link in mail enable true
         user.setEnableLogin(false);
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword())); //encode to protect in database
         userMapper.userToUserResponse(authRepository.save(user));
         String token = generateVerifyRegister(user);
         String mailContent = mailContentBuilderService.buiderContentMail(userRequest.getEmail(), token);
@@ -91,13 +99,21 @@ public class AuthService {
 
 
     public ResponseLogin login(RequestLogin userLogin) {
-        //try implementing here not using jwt filter
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(userLogin.getUsername());
 
-        // set userDetail to UsernamePasswordAuthenticationToken
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        return new ResponseLogin("", userLogin.getUsername());
+        // Create UsernamePasswordAuthenticationToken
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                userLogin.getUsername(), userLogin.getPassword());
+
+        // Authenticate user - spring auto check username and password with authenticationManager -need to define in config security
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        // Set authentication in security context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generate JWT token
+        String token = jwtProvider.generateToken(authentication);
+
+        // Return response with token
+        return new ResponseLogin( token, userLogin.getUsername());
     }
 }
