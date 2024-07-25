@@ -17,7 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -48,6 +50,9 @@ public class AuthService {
 
     @Autowired
     private final VerifyRegisterRepository verifyRegisterRepository;
+
+    @Autowired
+    private final AuthenticationManager authenticationManager;
     @Transactional
     public String  signUp(UserRequest userRequest) {
         Boolean checkUserExist = authRepository.existsByUsername(userRequest.getUsername());
@@ -92,12 +97,18 @@ public class AuthService {
 
     public ResponseLogin login(RequestLogin userLogin) {
         //try implementing here not using jwt filter
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(userLogin.getUsername());
 
-        // set userDetail to UsernamePasswordAuthenticationToken
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        return new ResponseLogin("", userLogin.getUsername());
+        // Create UsernamePasswordAuthenticationToken
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                userLogin.getUsername(), userLogin.getPassword());
+
+        // Authenticate user - spring auto check username and password with authenticationManager -need to define in config security
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        // Set authentication in security context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Return response with token
+        return new ResponseLogin( "token", userLogin.getUsername());
     }
 }
