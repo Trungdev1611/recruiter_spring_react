@@ -37,6 +37,11 @@ public class SecurityConfig  {
 //        return (web) -> web.ignoring()
 //                .requestMatchers(new AntPathRequestMatcher("/**"));
 //    }
+@Bean
+public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
+}
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
