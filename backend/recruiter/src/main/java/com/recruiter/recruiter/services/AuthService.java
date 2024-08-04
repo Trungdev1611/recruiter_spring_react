@@ -1,6 +1,7 @@
 package com.recruiter.recruiter.services;
 
 import com.recruiter.recruiter.configuration.CustomUserDetailService;
+import com.recruiter.recruiter.configuration.CustomUserDetails;
 import com.recruiter.recruiter.dto.request.RequestLogin;
 import com.recruiter.recruiter.dto.request.UserRequest;
 import com.recruiter.recruiter.dto.response.ResponseLogin;
@@ -21,11 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -91,6 +95,7 @@ public class AuthService {
 
         User user = verifyToken.getUser();
         user.setEnableLogin(true);
+        authRepository.save(user);
 
         log.info("user: {}", user);
         verifyRegisterRepository.deleteByToken(token);
@@ -100,6 +105,8 @@ public class AuthService {
 
     public ResponseLogin login(RequestLogin userLogin) {
 
+//        Optional<User> userData = authRepository.findByUsername(userLogin.getUsername());
+
         // Create UsernamePasswordAuthenticationToken
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 userLogin.getUsername(), userLogin.getPassword());
@@ -107,6 +114,14 @@ public class AuthService {
         // Authenticate user - spring auto check username and password with authenticationManager -need to define in config security
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
+        CustomUserDetails customUserDetails =  (CustomUserDetails)authentication.getPrincipal();
+        boolean isEnableLogin =     customUserDetails.isEnabled();
+        System.out.println("isEnableLogin " + isEnableLogin);
+        System.out.println("user   " + ( customUserDetails).getUsername() + " ))++  " + customUserDetails.getIdUserLogin());
+//        if(isEnableLogin) {
+//            throw new AuthenticationException("Please active your account before login") {
+//            };
+//        }
         // Set authentication in security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -115,5 +130,19 @@ public class AuthService {
 
         // Return response with token
         return new ResponseLogin( token, userLogin.getUsername());
+    }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            // Nếu UserDetails chứa thông tin về User của bạn, bạn có thể trả về User.
+            // Nếu UserDetails không phải là một đối tượng User, bạn có thể lấy thông tin người dùng từ userDetails.
+
+            return (User) userDetails; // Điều này giả định rằng UserDetails là User, có thể cần chuyển đổi hoặc truy vấn thêm nếu không.
+        }
+
+        return null; // Hoặc xử lý lỗi nếu không tìm thấy người dùng
     }
 }

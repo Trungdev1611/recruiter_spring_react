@@ -17,7 +17,8 @@ public class VerifyToken {
     private String token;
     private Instant dateCreated;
 
-    @OneToOne (cascade = CascadeType.ALL)
+//    @OneToOne (cascade = CascadeType.ALL) //when you delete the verification token you also delete the user associate with it
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name ="user_id")
     private User user;
 }

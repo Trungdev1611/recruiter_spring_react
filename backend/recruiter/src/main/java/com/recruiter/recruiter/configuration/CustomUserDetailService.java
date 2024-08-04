@@ -21,17 +21,30 @@ public class CustomUserDetailService implements UserDetailsService {
     private AuthRepository authRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = authRepository.findByUsername(username).orElseThrow(() -> new NotFoundEx("Username or password is not valid"));
 
         //one user has only one role, so that why I make it simple as bellow
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().name())) ; //.name method to get String of enum
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                //  new HashSet<GrantedAuthority>()// cái này là role empty
-                authorities
-                ) ;
+        //if you don't need another field as enable login, you should use the bellow constructor
+//        return new org.springframework.security.core.userdetails.User(
+//                user.getUsername(),
+//                user.getPassword(),
+//                //  new HashSet<GrantedAuthority>()// cái này là role empty
+//                authorities
+//                ) ;
+//        return new org.springframework.security.core.userdetails.User(
+//                user.getUsername(),
+//                user.getPassword(),
+//                user.getEnableLogin(),
+//                true, true, true,
+//                //  new HashSet<GrantedAuthority>()// cái này là role empty
+//                authorities
+//        ) ;
+
+        return new CustomUserDetails(user, user.getEnableLogin(), authorities);
+
     }
 }

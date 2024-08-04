@@ -70,7 +70,8 @@ public class GlobalException {
     // exception login
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
-        Response responseError = new Response(0, "please check username or password", null);
+        String errorMessage = (ex.getMessage() != null && !ex.getMessage().isEmpty()) ? ex.getMessage() : "Please check username or password";
+        Response responseError = new Response(0,  errorMessage , null);
         return new ResponseEntity<>(responseError, HttpStatus.BAD_REQUEST);
     }
 
