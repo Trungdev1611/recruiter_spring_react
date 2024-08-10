@@ -26,7 +26,8 @@ public class CustomUserDetailService implements UserDetailsService {
 
         //one user has only one role, so that why I make it simple as bellow
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().name())) ; //.name method to get String of enum
+        //using prefix role in here to check role with @Secured later
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+user.getRole().name())) ; //.name method to get String of enum
 
         //if you don't need another field as enable login, you should use the bellow constructor
 //        return new org.springframework.security.core.userdetails.User(

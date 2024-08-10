@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import './App.css'
 import SignUp from './pages/SignUp'
 import { Apiclient } from './api/apiClient'
+import Login from './components/auth/login/Login'
 
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
   },[])
   return (
     <>
-      <SignUp />
+      {/* <SignUp /> */}
+      <Login />
 
     </>
   )

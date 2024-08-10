@@ -117,7 +117,7 @@ public class AuthService {
         CustomUserDetails customUserDetails =  (CustomUserDetails)authentication.getPrincipal();
         boolean isEnableLogin =     customUserDetails.isEnabled();
         System.out.println("isEnableLogin " + isEnableLogin);
-        System.out.println("user   " + ( customUserDetails).getUsername() + " ))++  " + customUserDetails.getIdUserLogin());
+        System.out.println("user   " + ( customUserDetails).getUsername() + " ))++  " + customUserDetails.getIdUserLogin() + "role:: " + customUserDetails.getUser().getRole());
 //        if(isEnableLogin) {
 //            throw new AuthenticationException("Please active your account before login") {
 //            };
@@ -134,15 +134,9 @@ public class AuthService {
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            // Nếu UserDetails chứa thông tin về User của bạn, bạn có thể trả về User.
-            // Nếu UserDetails không phải là một đối tượng User, bạn có thể lấy thông tin người dùng từ userDetails.
-
-            return (User) userDetails; // Điều này giả định rằng UserDetails là User, có thể cần chuyển đổi hoặc truy vấn thêm nếu không.
+            return ((CustomUserDetails) authentication.getPrincipal()).getUser();
         }
-
-        return null; // Hoặc xử lý lỗi nếu không tìm thấy người dùng
+        return null;
     }
 }

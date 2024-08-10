@@ -4,6 +4,7 @@ import com.recruiter.recruiter.utils.Response;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -81,6 +82,12 @@ public class GlobalException {
 
         Response error = new Response(0, ex.getMessage(), null);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Response> handleAccessDeniedException(AccessDeniedException ex) {
+        Response responseError = new Response(0, "You are not accept to access this resource: " + ex.getMessage(), null);
+        return new ResponseEntity<>(responseError, HttpStatus.BAD_REQUEST);
     }
 
 
