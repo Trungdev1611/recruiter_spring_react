@@ -12,4 +12,9 @@ import lombok.Setter;
 public class RequirementResponse {
     private Long id;
     private String contentRequire;
+
+    @Override
+    public String toString() {
+        return "RequirementResponse{id=" + id + ", description='" + contentRequire + "'}";
+    }
 }

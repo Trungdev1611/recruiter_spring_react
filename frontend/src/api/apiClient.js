@@ -40,7 +40,7 @@ instance.interceptors.response.use(
     } else {
       console.log("error", error);
     }
-    return Promise.reject(error?.response?.data);
+    return Promise.reject(error);
   }
 );
 

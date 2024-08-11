@@ -1,25 +1,31 @@
-
-import { useEffect } from 'react'
 import './App.css'
 import SignUp from './pages/SignUp'
-import { Apiclient } from './api/apiClient'
-import Login from './components/auth/login/Login'
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
+]);
 
 function App() {
-  useEffect(() => {
-    async function getData() {
-      let res = await Apiclient.get(`/list-user`)
-      console.log("res", res)
-    }
-    getData()
-  },[])
   return (
-    <>
-      {/* <SignUp /> */}
-      <Login />
+    <RouterProvider router={router} />
 
-    </>
   )
 }
 

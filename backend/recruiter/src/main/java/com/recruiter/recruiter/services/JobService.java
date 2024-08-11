@@ -3,6 +3,8 @@ package com.recruiter.recruiter.services;
 import com.recruiter.recruiter.dto.request.JobRequest;
 import com.recruiter.recruiter.dto.request.RequirementRequest;
 import com.recruiter.recruiter.dto.response.JobResponse;
+import com.recruiter.recruiter.dto.response.RequirementResponse;
+import com.recruiter.recruiter.exception.NotFoundEx;
 import com.recruiter.recruiter.mapper.JobMapper;
 import com.recruiter.recruiter.mapper.RequirementMapper;
 import com.recruiter.recruiter.models.Job;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 
@@ -48,5 +52,19 @@ public class JobService {
         return jobResponse;
     }
 
+    public List<JobResponse> getListJob() {
+        List<Job> jobList = jobRepository.findAll();
+        return jobList.stream().map(jobItem -> jobMapper.jobToJobResponse(jobItem)).toList();
+    }
 
+    public JobResponse getJobDetail(Long idJob) {
+        Job jobDetail = jobRepository.findById(idJob).orElseThrow(() -> new NotFoundEx("job not found "));
+        List<RequirementResponse> requirementResponses =
+                jobDetail.getRequirements().stream().map(requireMent ->
+                requirementMapper.requirementToRequirementResponse(requireMent)).toList();
+//        System.out.println("requiment"+ requirementResponses);
+        JobResponse jobResponse =  (jobMapper.jobToJobResponse(jobDetail));
+        jobResponse.setRequirementResponses(requirementResponses);
+        return jobResponse;
+    }
 }

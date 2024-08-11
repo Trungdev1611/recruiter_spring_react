@@ -10,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -26,4 +24,15 @@ public class JobController {
         Response response = Response.successResponse(jobService.createJob(jobRequest));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    @GetMapping("/jobs")
+    ResponseEntity<Response> getListJob() {
+        Response response = Response.successResponse(jobService.getListJob());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/jobs/{idJob}")
+    ResponseEntity<Response> JobDetail(@PathVariable Long idJob) {
+        Response response = Response.successResponse(jobService.getJobDetail(idJob));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

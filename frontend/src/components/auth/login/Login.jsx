@@ -1,5 +1,5 @@
 
-import { Checkbox, Flex, Form } from "antd"
+import {  Flex, Form } from "antd"
 
 import InputText from "../../common/input/InputText"
 import InputPassWord from "../../common/input/InputPassWord"
