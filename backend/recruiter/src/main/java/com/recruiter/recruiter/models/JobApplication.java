@@ -20,9 +20,9 @@ public class JobApplication {
     @Id
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "job_id")
-//    private Job job;
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")

@@ -21,10 +21,8 @@ instance.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
     console.log("request Error", error);
     alert("error")
-    // showNotification("error", "Có lỗi khi thực hiện yêu cầu. Vui lòng thử lại");
     return Promise.reject(error);
   }
 );
@@ -36,11 +34,10 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response?.status === 401) {
       console.log("error401", error);
-      //   window.location.href = "http://127.0.0.1:5173/login"
     } else {
       console.log("error", error);
     }
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data || error);
   }
 );
 

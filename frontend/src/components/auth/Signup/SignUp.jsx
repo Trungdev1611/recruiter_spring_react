@@ -12,7 +12,7 @@ const SignUpComponent = () => {
 
   const onFinish = async (values) => {
     console.log('Success:', values);
-    let res = await Apiclient.post("/signup", values)
+    let res = await Apiclient.post("auth/signup", values)
     console.log("res sign up", res)
   };
   const onFinishFailed = (errorInfo) => {

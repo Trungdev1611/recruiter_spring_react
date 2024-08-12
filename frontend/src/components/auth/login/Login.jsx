@@ -1,5 +1,5 @@
 
-import {  Flex, Form } from "antd"
+import {  Flex, Form, message } from "antd"
 
 import InputText from "../../common/input/InputText"
 import InputPassWord from "../../common/input/InputPassWord"
@@ -9,12 +9,19 @@ import TypoAntd, { TextGreen } from "../../common/typo/TypoAntd";
 import ButtonCommon from "@src/components/common/button/ButtonCommon";
 import Optionlogin from "../Optionlogin";
 import signupImage from '@src/assets/image_signup.jpg'
+import { useNavigate } from "react-router-dom";
 const Login = () => {
-
+  const navigate = useNavigate()
   const onFinish = async (values) => {
-    console.log('Success:', values);
-    let res = await Apiclient.post("/signup", values)
-    console.log("res sign up", res)
+    try {
+      let res = await Apiclient.post("/auth/login", values)
+        localStorage.setItem("token", res?.data?.token)
+        message.success("Login success")
+        navigate("/")
+    } catch (error) {
+      message.error(error.message || "Login failed")
+    }
+
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -36,16 +43,16 @@ const Login = () => {
    
 
           <Form.Item
-            label="Email"
-            name="email"
+            label="Username"
+            name="username"
             rules={[
               {
                 required: true,
-                message: 'Please input your email!',
+                message: 'Please input your username!',
               },
             ]}
           >
-            <InputText placeholder = "Nhập email của bạn"/>
+            <InputText placeholder = "Nhập username của bạn"/>
           </Form.Item>
 
           <Form.Item
